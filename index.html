@@ -239,6 +239,8 @@
         <button onclick="expandAll()">Expand All</button>
         <button onclick="collapseAll()">Collapse All</button>
         <button onclick="compressJSON()">Compress</button>
+        <button onclick="escapeJSON()">Escape</button>
+        <button onclick="unescapeJSON()">Unescape</button>
         <button onclick="copyFormatted()">Copy</button>
         <button class="btn-primary" onclick="formatJSON()">Format</button>
       </div>
@@ -425,6 +427,39 @@
           attachToggleListeners();
         } catch (e) {
           outputEl.innerHTML = `<div class="error-msg">Invalid JSON:\n${escapeHtml(e.message)}</div>`;
+        }
+      }
+
+      function escapeJSON() {
+        const raw = inputEl.value.trim();
+        if (!raw) return;
+        const escaped = JSON.stringify(raw);
+        inputEl.value = escaped;
+        outputEl.innerHTML = `<span class="json-string">${escapeHtml(escaped)}</span>`;
+      }
+
+      function unescapeJSON() {
+        const raw = inputEl.value.trim();
+        if (!raw) return;
+        try {
+          const unescaped = JSON.parse(raw);
+          if (typeof unescaped === 'string') {
+            inputEl.value = unescaped;
+            // Try to parse the unescaped string as JSON and format it
+            try {
+              const parsed = JSON.parse(unescaped);
+              inputEl.value = JSON.stringify(parsed, null, 2);
+              outputEl.innerHTML = renderValue(parsed, 0);
+              attachToggleListeners();
+            } catch {
+              outputEl.innerHTML = `<span class="json-string">${escapeHtml(unescaped)}</span>`;
+            }
+          } else {
+            outputEl.innerHTML =
+              '<div class="error-msg">Input is not an escaped string</div>';
+          }
+        } catch (e) {
+          outputEl.innerHTML = `<div class="error-msg">Invalid escaped string:\n${escapeHtml(e.message)}</div>`;
         }
       }
 
