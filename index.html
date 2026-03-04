@@ -257,7 +257,7 @@
       </div>
       <div class="divider"></div>
       <div class="panel">
-        <div class="panel-label">Formatted Output</div>
+        <div class="panel-label" id="output-label">Formatted Output</div>
         <div class="output" id="output">
           <span style="color: #585b70"
             >Paste JSON on the left and click Format</span
@@ -269,6 +269,11 @@
     <script>
       const inputEl = document.getElementById('input');
       const outputEl = document.getElementById('output');
+      const outputLabelEl = document.getElementById('output-label');
+
+      function setOutputLabel(text) {
+        outputLabelEl.textContent = text;
+      }
 
       // Format on Ctrl/Cmd+Enter
       inputEl.addEventListener('keydown', (e) => {
@@ -294,6 +299,7 @@
         if (!raw) {
           outputEl.innerHTML =
             '<span style="color:#585b70">Paste JSON on the left and click Format</span>';
+          setOutputLabel('Formatted Output');
           return;
         }
 
@@ -305,9 +311,7 @@
           return;
         }
 
-        // Also pretty-print back into the input
-        inputEl.value = JSON.stringify(parsed, null, 2);
-
+        setOutputLabel('Formatted Output');
         outputEl.innerHTML = renderValue(parsed, 0);
         attachToggleListeners();
       }
@@ -422,9 +426,8 @@
         try {
           const parsed = JSON.parse(raw);
           const compressed = JSON.stringify(parsed);
-          inputEl.value = compressed;
-          outputEl.innerHTML = renderValue(parsed, 0);
-          attachToggleListeners();
+          setOutputLabel('Compressed Output');
+          outputEl.innerHTML = `<span class="json-string">${escapeHtml(compressed)}</span>`;
         } catch (e) {
           outputEl.innerHTML = `<div class="error-msg">Invalid JSON:\n${escapeHtml(e.message)}</div>`;
         }
@@ -434,7 +437,7 @@
         const raw = inputEl.value.trim();
         if (!raw) return;
         const escaped = JSON.stringify(raw);
-        inputEl.value = escaped;
+        setOutputLabel('Escaped Output');
         outputEl.innerHTML = `<span class="json-string">${escapeHtml(escaped)}</span>`;
       }
 
@@ -444,14 +447,14 @@
         try {
           const unescaped = JSON.parse(raw);
           if (typeof unescaped === 'string') {
-            inputEl.value = unescaped;
             // Try to parse the unescaped string as JSON and format it
             try {
               const parsed = JSON.parse(unescaped);
-              inputEl.value = JSON.stringify(parsed, null, 2);
+              setOutputLabel('Unescaped Output');
               outputEl.innerHTML = renderValue(parsed, 0);
               attachToggleListeners();
             } catch {
+              setOutputLabel('Unescaped Output');
               outputEl.innerHTML = `<span class="json-string">${escapeHtml(unescaped)}</span>`;
             }
           } else {
@@ -464,13 +467,9 @@
       }
 
       function copyFormatted() {
-        const raw = inputEl.value.trim();
-        if (!raw) return;
-        try {
-          const parsed = JSON.parse(raw);
-          navigator.clipboard.writeText(JSON.stringify(parsed, null, 2));
-        } catch {
-          navigator.clipboard.writeText(raw);
+        const text = outputEl.textContent;
+        if (text) {
+          navigator.clipboard.writeText(text);
         }
       }
 
