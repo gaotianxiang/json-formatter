@@ -1,391 +1,447 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JSON Formatter</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JSON Formatter</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #1e1e2e;
-      color: #cdd6f4;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: #1e1e2e;
+        color: #cdd6f4;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
 
-    header {
-      padding: 16px 24px;
-      background: #181825;
-      border-bottom: 1px solid #313244;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
+      header {
+        padding: 16px 24px;
+        background: #181825;
+        border-bottom: 1px solid #313244;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
 
-    header h1 {
-      font-size: 18px;
-      font-weight: 600;
-      color: #cba6f7;
-    }
+      header h1 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #cba6f7;
+      }
 
-    .toolbar {
-      display: flex;
-      gap: 8px;
-      margin-left: auto;
-    }
+      .toolbar {
+        display: flex;
+        gap: 8px;
+        margin-left: auto;
+      }
 
-    button {
-      padding: 6px 14px;
-      border: 1px solid #45475a;
-      border-radius: 6px;
-      background: #313244;
-      color: #cdd6f4;
-      font-size: 13px;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
+      button {
+        padding: 6px 14px;
+        border: 1px solid #45475a;
+        border-radius: 6px;
+        background: #313244;
+        color: #cdd6f4;
+        font-size: 13px;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
 
-    button:hover { background: #45475a; }
+      button:hover {
+        background: #45475a;
+      }
 
-    .btn-primary {
-      background: #cba6f7;
-      color: #1e1e2e;
-      border-color: #cba6f7;
-      font-weight: 600;
-    }
+      .btn-primary {
+        background: #cba6f7;
+        color: #1e1e2e;
+        border-color: #cba6f7;
+        font-weight: 600;
+      }
 
-    .btn-primary:hover { background: #b4befe; border-color: #b4befe; }
+      .btn-primary:hover {
+        background: #b4befe;
+        border-color: #b4befe;
+      }
 
-    .main {
-      flex: 1;
-      display: flex;
-      overflow: hidden;
-    }
+      .main {
+        flex: 1;
+        display: flex;
+        overflow: hidden;
+      }
 
-    .panel {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
+      .panel {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
 
-    .panel-label {
-      padding: 8px 16px;
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #6c7086;
-      background: #181825;
-      border-bottom: 1px solid #313244;
-    }
+      .panel-label {
+        padding: 8px 16px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #6c7086;
+        background: #181825;
+        border-bottom: 1px solid #313244;
+      }
 
-    .divider {
-      width: 1px;
-      background: #313244;
-    }
+      .divider {
+        width: 1px;
+        background: #313244;
+      }
 
-    textarea {
-      flex: 1;
-      padding: 16px;
-      background: #1e1e2e;
-      color: #cdd6f4;
-      border: none;
-      outline: none;
-      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
-      font-size: 13px;
-      line-height: 1.6;
-      resize: none;
-      tab-size: 2;
-    }
+      textarea {
+        flex: 1;
+        padding: 16px;
+        background: #1e1e2e;
+        color: #cdd6f4;
+        border: none;
+        outline: none;
+        font-family:
+          'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+        font-size: 13px;
+        line-height: 1.6;
+        resize: none;
+        tab-size: 2;
+      }
 
-    textarea::placeholder { color: #585b70; }
+      textarea::placeholder {
+        color: #585b70;
+      }
 
-    .output {
-      flex: 1;
-      padding: 16px;
-      overflow: auto;
-      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
-      font-size: 13px;
-      line-height: 1.6;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-    }
+      .output {
+        flex: 1;
+        padding: 16px;
+        overflow: auto;
+        font-family:
+          'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+        font-size: 13px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
 
-    .error-msg {
-      color: #f38ba8;
-      padding: 16px;
-      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
-      font-size: 13px;
-      white-space: pre-wrap;
-    }
+      .error-msg {
+        color: #f38ba8;
+        padding: 16px;
+        font-family:
+          'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+        font-size: 13px;
+        white-space: pre-wrap;
+      }
 
-    /* JSON syntax highlighting */
-    .json-key { color: #89b4fa; }
-    .json-string { color: #a6e3a1; }
-    .json-number { color: #fab387; }
-    .json-boolean { color: #cba6f7; }
-    .json-null { color: #f38ba8; }
-    .json-bracket { color: #6c7086; }
-    .json-comma { color: #6c7086; }
+      /* JSON syntax highlighting */
+      .json-key {
+        color: #89b4fa;
+      }
+      .json-string {
+        color: #a6e3a1;
+      }
+      .json-number {
+        color: #fab387;
+      }
+      .json-boolean {
+        color: #cba6f7;
+      }
+      .json-null {
+        color: #f38ba8;
+      }
+      .json-bracket {
+        color: #6c7086;
+      }
+      .json-comma {
+        color: #6c7086;
+      }
 
-    /* Collapsible */
-    .collapsible {
-      display: inline;
-    }
+      /* Collapsible */
+      .collapsible {
+        display: inline;
+      }
 
-    .toggle {
-      cursor: pointer;
-      user-select: none;
-      display: inline;
-    }
+      .toggle {
+        cursor: pointer;
+        user-select: none;
+        display: inline;
+      }
 
-    .toggle:hover .json-bracket {
-      color: #f9e2af;
-    }
+      .toggle:hover .json-bracket {
+        color: #f9e2af;
+      }
 
-    .toggle::before {
-      content: '▼';
-      display: inline-block;
-      font-size: 9px;
-      width: 14px;
-      color: #585b70;
-      transition: transform 0.15s;
-    }
+      .toggle::before {
+        content: '▼';
+        display: inline-block;
+        font-size: 9px;
+        width: 14px;
+        color: #585b70;
+        transition: transform 0.15s;
+      }
 
-    .toggle.collapsed::before {
-      transform: rotate(-90deg);
-    }
+      .toggle.collapsed::before {
+        transform: rotate(-90deg);
+      }
 
-    .collapsible-content {
-      display: inline;
-    }
+      .collapsible-content {
+        display: inline;
+      }
 
-    .toggle.collapsed ~ .collapsible-content {
-      display: none;
-    }
+      .toggle.collapsed ~ .collapsible-content {
+        display: none;
+      }
 
-    .collapsed-placeholder {
-      display: none;
-      color: #585b70;
-      font-style: italic;
-      font-size: 12px;
-    }
+      .collapsed-placeholder {
+        display: none;
+        color: #585b70;
+        font-style: italic;
+        font-size: 12px;
+      }
 
-    .toggle.collapsed ~ .collapsed-placeholder {
-      display: inline;
-    }
+      .toggle.collapsed ~ .collapsed-placeholder {
+        display: inline;
+      }
 
-    .toggle.collapsed ~ .closing-bracket {
-      display: inline;
-    }
+      .toggle.collapsed ~ .closing-bracket {
+        display: inline;
+      }
 
-    .line {
-      white-space: pre;
-    }
+      .line {
+        white-space: pre;
+      }
 
-    /* Responsive */
-    @media (max-width: 700px) {
-      .main { flex-direction: column; }
-      .divider { width: auto; height: 1px; }
-      .panel { min-height: 0; }
-    }
-  </style>
-</head>
-<body>
-
-<header>
-  <h1>JSON Formatter</h1>
-  <div class="toolbar">
-    <button onclick="expandAll()">Expand All</button>
-    <button onclick="collapseAll()">Collapse All</button>
-    <button onclick="compressJSON()">Compress</button>
-    <button onclick="copyFormatted()">Copy</button>
-    <button class="btn-primary" onclick="formatJSON()">Format</button>
-  </div>
-</header>
-
-<div class="main">
-  <div class="panel">
-    <div class="panel-label">Input</div>
-    <textarea id="input" placeholder='Paste your JSON here...' spellcheck="false"></textarea>
-  </div>
-  <div class="divider"></div>
-  <div class="panel">
-    <div class="panel-label">Formatted Output</div>
-    <div class="output" id="output">
-      <span style="color:#585b70">Paste JSON on the left and click Format</span>
-    </div>
-  </div>
-</div>
-
-<script>
-  const inputEl = document.getElementById('input');
-  const outputEl = document.getElementById('output');
-
-  // Format on Ctrl/Cmd+Enter
-  inputEl.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-      e.preventDefault();
-      formatJSON();
-    }
-    // Allow Tab in textarea
-    if (e.key === 'Tab') {
-      e.preventDefault();
-      const start = inputEl.selectionStart;
-      const end = inputEl.selectionEnd;
-      inputEl.value = inputEl.value.substring(0, start) + '  ' + inputEl.value.substring(end);
-      inputEl.selectionStart = inputEl.selectionEnd = start + 2;
-    }
-  });
-
-  function formatJSON() {
-    const raw = inputEl.value.trim();
-    if (!raw) {
-      outputEl.innerHTML = '<span style="color:#585b70">Paste JSON on the left and click Format</span>';
-      return;
-    }
-
-    let parsed;
-    try {
-      parsed = JSON.parse(raw);
-    } catch (e) {
-      outputEl.innerHTML = `<div class="error-msg">Invalid JSON:\n${escapeHtml(e.message)}</div>`;
-      return;
-    }
-
-    // Also pretty-print back into the input
-    inputEl.value = JSON.stringify(parsed, null, 2);
-
-    outputEl.innerHTML = renderValue(parsed, 0);
-    attachToggleListeners();
-  }
-
-  function escapeHtml(str) {
-    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  }
-
-  function indent(level) {
-    return '  '.repeat(level);
-  }
-
-  function renderValue(value, level) {
-    if (value === null) {
-      return '<span class="json-null">null</span>';
-    }
-    switch (typeof value) {
-      case 'string':
-        return `<span class="json-string">"${escapeHtml(value)}"</span>`;
-      case 'number':
-        return `<span class="json-number">${value}</span>`;
-      case 'boolean':
-        return `<span class="json-boolean">${value}</span>`;
-      case 'object':
-        if (Array.isArray(value)) {
-          return renderArray(value, level);
+      /* Responsive */
+      @media (max-width: 700px) {
+        .main {
+          flex-direction: column;
         }
-        return renderObject(value, level);
-      default:
-        return escapeHtml(String(value));
-    }
-  }
+        .divider {
+          width: auto;
+          height: 1px;
+        }
+        .panel {
+          min-height: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>JSON Formatter</h1>
+      <div class="toolbar">
+        <button onclick="expandAll()">Expand All</button>
+        <button onclick="collapseAll()">Collapse All</button>
+        <button onclick="compressJSON()">Compress</button>
+        <button onclick="copyFormatted()">Copy</button>
+        <button class="btn-primary" onclick="formatJSON()">Format</button>
+      </div>
+    </header>
 
-  function renderObject(obj, level) {
-    const keys = Object.keys(obj);
-    if (keys.length === 0) {
-      return '<span class="json-bracket">{}</span>';
-    }
+    <div class="main">
+      <div class="panel">
+        <div class="panel-label">Input</div>
+        <textarea
+          id="input"
+          placeholder="Paste your JSON here..."
+          spellcheck="false"
+        ></textarea>
+      </div>
+      <div class="divider"></div>
+      <div class="panel">
+        <div class="panel-label">Formatted Output</div>
+        <div class="output" id="output">
+          <span style="color: #585b70"
+            >Paste JSON on the left and click Format</span
+          >
+        </div>
+      </div>
+    </div>
 
-    const childIndent = indent(level + 1);
-    const closeIndent = indent(level);
-    const count = keys.length;
+    <script>
+      const inputEl = document.getElementById('input');
+      const outputEl = document.getElementById('output');
 
-    let lines = [];
-    keys.forEach((key, i) => {
-      const comma = i < keys.length - 1 ? '<span class="json-comma">,</span>' : '';
-      const val = renderValue(obj[key], level + 1);
-      lines.push(`${childIndent}<span class="json-key">"${escapeHtml(key)}"</span>: ${val}${comma}`);
-    });
-
-    const id = uniqueId();
-    return `<span class="collapsible"><span class="toggle" data-id="${id}"><span class="json-bracket">{</span></span><span class="collapsed-placeholder"> ${count} ${count === 1 ? 'key' : 'keys'} </span><span class="collapsible-content" data-id="${id}">\n${lines.join('\n')}\n${closeIndent}</span><span class="json-bracket closing-bracket">}</span></span>`;
-  }
-
-  function renderArray(arr, level) {
-    if (arr.length === 0) {
-      return '<span class="json-bracket">[]</span>';
-    }
-
-    const childIndent = indent(level + 1);
-    const closeIndent = indent(level);
-    const count = arr.length;
-
-    let lines = [];
-    arr.forEach((item, i) => {
-      const comma = i < arr.length - 1 ? '<span class="json-comma">,</span>' : '';
-      const val = renderValue(item, level + 1);
-      lines.push(`${childIndent}${val}${comma}`);
-    });
-
-    const id = uniqueId();
-    return `<span class="collapsible"><span class="toggle" data-id="${id}"><span class="json-bracket">[</span></span><span class="collapsed-placeholder"> ${count} ${count === 1 ? 'item' : 'items'} </span><span class="collapsible-content" data-id="${id}">\n${lines.join('\n')}\n${closeIndent}</span><span class="json-bracket closing-bracket">]</span></span>`;
-  }
-
-  let _idCounter = 0;
-  function uniqueId() {
-    return 'c' + (_idCounter++);
-  }
-
-  function attachToggleListeners() {
-    outputEl.querySelectorAll('.toggle').forEach(toggle => {
-      toggle.addEventListener('click', (e) => {
-        e.stopPropagation();
-        toggle.classList.toggle('collapsed');
+      // Format on Ctrl/Cmd+Enter
+      inputEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+          e.preventDefault();
+          formatJSON();
+        }
+        // Allow Tab in textarea
+        if (e.key === 'Tab') {
+          e.preventDefault();
+          const start = inputEl.selectionStart;
+          const end = inputEl.selectionEnd;
+          inputEl.value =
+            inputEl.value.substring(0, start) +
+            '  ' +
+            inputEl.value.substring(end);
+          inputEl.selectionStart = inputEl.selectionEnd = start + 2;
+        }
       });
-    });
-  }
 
-  function expandAll() {
-    outputEl.querySelectorAll('.toggle.collapsed').forEach(t => t.classList.remove('collapsed'));
-  }
+      function formatJSON() {
+        const raw = inputEl.value.trim();
+        if (!raw) {
+          outputEl.innerHTML =
+            '<span style="color:#585b70">Paste JSON on the left and click Format</span>';
+          return;
+        }
 
-  function collapseAll() {
-    outputEl.querySelectorAll('.toggle').forEach(t => t.classList.add('collapsed'));
-  }
+        let parsed;
+        try {
+          parsed = JSON.parse(raw);
+        } catch (e) {
+          outputEl.innerHTML = `<div class="error-msg">Invalid JSON:\n${escapeHtml(e.message)}</div>`;
+          return;
+        }
 
-  function compressJSON() {
-    const raw = inputEl.value.trim();
-    if (!raw) return;
-    try {
-      const parsed = JSON.parse(raw);
-      const compressed = JSON.stringify(parsed);
-      inputEl.value = compressed;
-      outputEl.innerHTML = renderValue(parsed, 0);
-      attachToggleListeners();
-    } catch (e) {
-      outputEl.innerHTML = `<div class="error-msg">Invalid JSON:\n${escapeHtml(e.message)}</div>`;
-    }
-  }
+        // Also pretty-print back into the input
+        inputEl.value = JSON.stringify(parsed, null, 2);
 
-  function copyFormatted() {
-    const raw = inputEl.value.trim();
-    if (!raw) return;
-    try {
-      const parsed = JSON.parse(raw);
-      navigator.clipboard.writeText(JSON.stringify(parsed, null, 2));
-    } catch {
-      navigator.clipboard.writeText(raw);
-    }
-  }
+        outputEl.innerHTML = renderValue(parsed, 0);
+        attachToggleListeners();
+      }
 
-  // Auto-format on paste
-  inputEl.addEventListener('paste', () => {
-    setTimeout(formatJSON, 0);
-  });
-</script>
+      function escapeHtml(str) {
+        return str
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
 
-</body>
+      function indent(level) {
+        return '  '.repeat(level);
+      }
+
+      function renderValue(value, level) {
+        if (value === null) {
+          return '<span class="json-null">null</span>';
+        }
+        switch (typeof value) {
+          case 'string':
+            return `<span class="json-string">"${escapeHtml(value)}"</span>`;
+          case 'number':
+            return `<span class="json-number">${value}</span>`;
+          case 'boolean':
+            return `<span class="json-boolean">${value}</span>`;
+          case 'object':
+            if (Array.isArray(value)) {
+              return renderArray(value, level);
+            }
+            return renderObject(value, level);
+          default:
+            return escapeHtml(String(value));
+        }
+      }
+
+      function renderObject(obj, level) {
+        const keys = Object.keys(obj);
+        if (keys.length === 0) {
+          return '<span class="json-bracket">{}</span>';
+        }
+
+        const childIndent = indent(level + 1);
+        const closeIndent = indent(level);
+        const count = keys.length;
+
+        let lines = [];
+        keys.forEach((key, i) => {
+          const comma =
+            i < keys.length - 1 ? '<span class="json-comma">,</span>' : '';
+          const val = renderValue(obj[key], level + 1);
+          lines.push(
+            `${childIndent}<span class="json-key">"${escapeHtml(key)}"</span>: ${val}${comma}`,
+          );
+        });
+
+        const id = uniqueId();
+        return `<span class="collapsible"><span class="toggle" data-id="${id}"><span class="json-bracket">{</span></span><span class="collapsed-placeholder"> ${count} ${count === 1 ? 'key' : 'keys'} </span><span class="collapsible-content" data-id="${id}">\n${lines.join('\n')}\n${closeIndent}</span><span class="json-bracket closing-bracket">}</span></span>`;
+      }
+
+      function renderArray(arr, level) {
+        if (arr.length === 0) {
+          return '<span class="json-bracket">[]</span>';
+        }
+
+        const childIndent = indent(level + 1);
+        const closeIndent = indent(level);
+        const count = arr.length;
+
+        let lines = [];
+        arr.forEach((item, i) => {
+          const comma =
+            i < arr.length - 1 ? '<span class="json-comma">,</span>' : '';
+          const val = renderValue(item, level + 1);
+          lines.push(`${childIndent}${val}${comma}`);
+        });
+
+        const id = uniqueId();
+        return `<span class="collapsible"><span class="toggle" data-id="${id}"><span class="json-bracket">[</span></span><span class="collapsed-placeholder"> ${count} ${count === 1 ? 'item' : 'items'} </span><span class="collapsible-content" data-id="${id}">\n${lines.join('\n')}\n${closeIndent}</span><span class="json-bracket closing-bracket">]</span></span>`;
+      }
+
+      let _idCounter = 0;
+      function uniqueId() {
+        return 'c' + _idCounter++;
+      }
+
+      function attachToggleListeners() {
+        outputEl.querySelectorAll('.toggle').forEach((toggle) => {
+          toggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggle.classList.toggle('collapsed');
+          });
+        });
+      }
+
+      function expandAll() {
+        outputEl
+          .querySelectorAll('.toggle.collapsed')
+          .forEach((t) => t.classList.remove('collapsed'));
+      }
+
+      function collapseAll() {
+        outputEl
+          .querySelectorAll('.toggle')
+          .forEach((t) => t.classList.add('collapsed'));
+      }
+
+      function compressJSON() {
+        const raw = inputEl.value.trim();
+        if (!raw) return;
+        try {
+          const parsed = JSON.parse(raw);
+          const compressed = JSON.stringify(parsed);
+          inputEl.value = compressed;
+          outputEl.innerHTML = renderValue(parsed, 0);
+          attachToggleListeners();
+        } catch (e) {
+          outputEl.innerHTML = `<div class="error-msg">Invalid JSON:\n${escapeHtml(e.message)}</div>`;
+        }
+      }
+
+      function copyFormatted() {
+        const raw = inputEl.value.trim();
+        if (!raw) return;
+        try {
+          const parsed = JSON.parse(raw);
+          navigator.clipboard.writeText(JSON.stringify(parsed, null, 2));
+        } catch {
+          navigator.clipboard.writeText(raw);
+        }
+      }
+
+      // Auto-format on paste
+      inputEl.addEventListener('paste', () => {
+        setTimeout(formatJSON, 0);
+      });
+    </script>
+  </body>
 </html>
