@@ -18,7 +18,7 @@ A lightweight, single-page web application for formatting, highlighting, and exp
 
 Open `index.html` in any browser. No build step, no dependencies.
 
-Or visit the deployed version: [json-formatter.vercel.app](https://json-formatter-five-pearl.vercel.app)
+Or visit the deployed version: [json-formatter-mauve-pi.vercel.app](https://json-formatter-mauve-pi.vercel.app)
 
 ## Development
 
